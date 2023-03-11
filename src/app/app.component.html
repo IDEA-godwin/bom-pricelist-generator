@@ -1,16 +1,16 @@
 
  <!--The content below is only a placeholder and can be replaced.-->
  <div class="content">
-    <h1 style="text-align:center">
+    <h1 class="text-center mt-2">
       Welcome to {{title}}!
     </h1>
     <form
         class="row justify-content-center"
         [formGroup]="form" (submit)="previewSelection(preview)"
     >
-        <div class="col-6 mt-4">
+        <div class="col-md-6 col-sm-12 mt-4 text-center">
             <label class="mx-3" for="vendorList">Select Vendor: </label>
-            <select id="vendorList" class="d-inline-block form-select w-75" formControlName="vendor">
+            <select id="vendorList" class="d-inline-block form-select w-50" formControlName="vendor">
                 <option [defaultSelected]="true" disabled>Select a Vendor</option>
                 <option
                     *ngFor="let vendor of vendorList"
@@ -22,7 +22,7 @@
         </div>
 
         <div class="row justify-content-center" *ngIf="showList">
-            <div class="col-7 mt-4 table-container">
+            <div class="col-lg-8 col-sm-11 mt-4 table-container">
                 <table>
                     <thead>
                         <tr>
