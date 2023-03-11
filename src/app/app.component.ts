@@ -3,7 +3,6 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import jsPDF from 'jspdf';
-
 import pricelists from '../assets/data/pricelists.json';
 
 type entries = [string, number][];
