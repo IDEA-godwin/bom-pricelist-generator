@@ -86,7 +86,7 @@ export class AppComponent implements OnInit  {
     this.selectedItems = formRawData.items.filter((x: any) => x.selected);
     this.totalAmount = formRawData.items.map((x: any) => (x.price * x.quantity)).reduce((x: number, y: number) => x + y);
 
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(result => {
+    this.modalService.open(content, { ariaLabelledBy: 'pricelist-preview-modal' }).result.then(result => {
 
     })
   }

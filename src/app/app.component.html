@@ -1,13 +1,16 @@
 
  <!--The content below is only a placeholder and can be replaced.-->
- <div style="text-align:center" class="content">
-    <h1>
+ <div class="content">
+    <h1 style="text-align:center">
       Welcome to {{title}}!
     </h1>
-    <form [formGroup]="form" (submit)="previewSelection(preview)">
-        <div>
-            <label for="vendorList">Vendor: </label>
-            <select id="vendorList" formControlName="vendor">
+    <form
+        class="row justify-content-center"
+        [formGroup]="form" (submit)="previewSelection(preview)"
+    >
+        <div class="col-6 mt-4">
+            <label class="mx-3" for="vendorList">Select Vendor: </label>
+            <select id="vendorList" class="d-inline-block form-select w-75" formControlName="vendor">
                 <option [defaultSelected]="true" disabled>Select a Vendor</option>
                 <option
                     *ngFor="let vendor of vendorList"
@@ -17,8 +20,9 @@
                 </option>
             </select>
         </div>
-        <div *ngIf="showList">
-            <div class="table-container">
+
+        <div class="row justify-content-center" *ngIf="showList">
+            <div class="col-7 mt-4 table-container">
                 <table>
                     <thead>
                         <tr>
@@ -34,16 +38,17 @@
                             [id]="i" [formGroupName]="i"
                         >
                             <td> <input type="checkbox" formControlName="selected" (change)="selectItem(i)" /> </td>
-                            <td> <input formControlName="component" /> </td>
-                            <td> <input formControlName="price" /> </td>
+                            <td> <input class="form-control" formControlName="component" /> </td>
+                            <td> <input class="form-control" formControlName="price" /> </td>
                             <td> <input type="number" min="1" formControlName="quantity" /> </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <input type="submit" value="Preview"  />
         </div>
-
+        <div class="row mt-4 justify-content-center" *ngIf="showList">
+            <input class="btn btn-outline-primary w-25" type="submit" value="Preview"  />
+        </div>
     </form>
   </div>
 
@@ -54,7 +59,7 @@
 	</div>
 	<div class="modal-body">
         <h3> {{vendor}} </h3>
-        <table *ngIf="selectedItems.length">
+        <table class="w-100" *ngIf="selectedItems.length">
             <thead>
                 <tr>
                     <td>S/N</td>
@@ -71,13 +76,13 @@
                     <td> {{ i + 1 }} </td>
                     <td> {{ item.component }} </td>
                     <td> {{ item.quantity }} </td>
-                    <td> {{ item.price * item.quantity }} </td>
+                    <td class="price"> {{ item.price * item.quantity }} </td>
                 </tr>
                 <tr class="border-top">
                     <td></td>
                     <td></td>
                     <td>Total</td>
-                    <td> {{ totalAmount }} </td>
+                    <td class="price"> {{ totalAmount }} </td>
                 </tr>
             </tbody>
         </table>
