@@ -3,7 +3,7 @@
 
 .table-container {
     position: relative;
-    height: 650px;
+    height: 600px;
     overflow: scroll;
     overflow-y: visible;
 }

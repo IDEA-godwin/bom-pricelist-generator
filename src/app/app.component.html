@@ -2,27 +2,39 @@
  <!--The content below is only a placeholder and can be replaced.-->
  <div class="content">
     <h1 class="text-center mt-2">
-      Welcome to {{title}}!
+      Welcome to {{pageTitle}}!
     </h1>
     <form
         class="row justify-content-center"
         [formGroup]="form" (submit)="previewSelection(preview)"
     >
-        <div class="col-md-6 col-sm-12 mt-4 text-center">
-            <label class="mx-3" for="vendorList">Select Vendor: </label>
-            <select id="vendorList" class="d-inline-block form-select w-50" formControlName="vendor">
-                <option [defaultSelected]="true" disabled>Select a Vendor</option>
-                <option
-                    *ngFor="let vendor of vendorList"
-                    [id]="vendor" [value]="vendor"
-                >
-                    {{ vendor }}
-                </option>
-            </select>
+        <div class="col-md-6 col-sm-12 mt-4">
+            <div class="mb-3">
+                <label class="form-label ms-3 me-4" for="listTitle">Title: </label>
+                <input
+                    class="d-inline-block form-control w-50 ms-5"
+                    formControlName="title" id="listTitle"
+                    placeholder="Title of generated list"
+                    (focus)="error = false"
+                />
+                <div *ngIf="error" class="form-text text-danger ms-3">enter an title</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label mx-3" for="vendorList">Select Vendor: </label>
+                <select id="vendorList" class="d-inline-block form-select w-50" formControlName="vendor">
+                    <option [defaultSelected]="true" disabled>Select a Vendor</option>
+                    <option
+                        *ngFor="let vendor of vendorList"
+                        [id]="vendor" [value]="vendor"
+                    >
+                        {{ vendor }}
+                    </option>
+                </select>
+            </div>
         </div>
 
         <div class="row justify-content-center" *ngIf="showList">
-            <div class="col-lg-8 col-sm-11 mt-4 table-container">
+            <div class="col-lg-8 col-sm-11 table-container">
                 <table>
                     <thead>
                         <tr>
@@ -57,47 +69,52 @@
 		<h4 class="modal-title" id="modal-basic-title">Pricelist Preview</h4>
 		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
 	</div>
-	<div class="modal-body">
-        <h3> {{vendor}} </h3>
-        <table class="w-100" *ngIf="selectedItems.length">
-            <thead>
-                <tr>
-                    <td>S/N</td>
-                    <td>Components</td>
-                    <td>Quantity</td>
-                    <td>Price</td>
-                </tr>
-            </thead>
-            <tbody >
-                <tr
-                    *ngFor="let item of selectedItems; let i = index"
-                    [id]="i"
-                >
-                    <td> {{ i + 1 }} </td>
-                    <td> {{ item.component }} </td>
-                    <td> {{ item.quantity }} </td>
-                    <td class="price"> {{ item.price * item.quantity }} </td>
-                </tr>
-                <tr class="border-top">
-                    <td></td>
-                    <td></td>
-                    <td>Total</td>
-                    <td class="price"> {{ totalAmount }} </td>
-                </tr>
-            </tbody>
-        </table>
-        <div *ngIf="!selectedItems.length">No Item selected</div>
+	<div id="list-preview" class="modal-body w-100">
+        <div style="margin: auto;">
+            <div class="text-center mb-3">
+                <h3 id="title"> {{ title }} </h3>
+            </div>
+            <div id="vendorDiv"> Merchant: <h5 class="d-inline"> {{vendor}} </h5></div>
+            <table id="table" class="w-100" *ngIf="selectedItems.length">
+                <thead>
+                    <tr>
+                        <td>S/N</td>
+                        <td>Components</td>
+                        <td>Quantity</td>
+                        <td>Price</td>
+                    </tr>
+                </thead>
+                <tbody >
+                    <tr
+                        *ngFor="let item of selectedItems; let i = index"
+                        [id]="i"
+                    >
+                        <td> {{ i + 1 }} </td>
+                        <td> {{ item.component }} </td>
+                        <td> {{ item.quantity }} </td>
+                        <td class="price"> {{ item.price * item.quantity }} </td>
+                    </tr>
+                    <tr class="border-top">
+                        <td></td>
+                        <td></td>
+                        <td>Total</td>
+                        <td class="price"> {{ totalAmount }} </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="!selectedItems">No item selected</div>
 	</div>
 	<div class="modal-footer">
         <button
             type="button" class="btn btn-outline-primary"
-            (click)="modal.close('Edit click')"
+            (click)="modal.close('edit')"
         >
             Edit
         </button>
 		<button
             type="button" class="btn btn-outline-dark"
-            (click)="modal.close('Save click')"
+            (click)="saveListToPdf()"
         >
             Save
         </button>
