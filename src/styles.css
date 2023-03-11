@@ -1,1 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
+
+
+.table-container {
+    margin: 10px auto;
+    width: fit-content;
+    height: 500px;
+    overflow: scroll;
+    overflow-y: visible;
+}
+
+table {
+    width: 50%;
+}
+
+thead {
+    padding: 10px 7px;
+    border-bottom: 1px solid black;
+}
+
+td {
+    padding: 7px;
+    text-align: left;
+}
+
+input[type=number] {
+    width: 40px;
+}

@@ -1,0 +1,100 @@
+
+ <!--The content below is only a placeholder and can be replaced.-->
+ <div style="text-align:center" class="content">
+    <h1>
+      Welcome to {{title}}!
+    </h1>
+    <form [formGroup]="form" (submit)="previewSelection(preview)">
+        <div>
+            <label for="vendorList">Vendor: </label>
+            <select id="vendorList" formControlName="vendor">
+                <option [defaultSelected]="true" disabled>Select a Vendor</option>
+                <option
+                    *ngFor="let vendor of vendorList"
+                    [id]="vendor" [value]="vendor"
+                >
+                    {{ vendor }}
+                </option>
+            </select>
+        </div>
+        <div *ngIf="showList">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <td></td>
+                            <td>Components</td>
+                            <td>Price</td>
+                            <td>Quantity</td>
+                        </tr>
+                    </thead>
+                    <tbody formArrayName="items">
+                        <tr
+                            *ngFor="let itemsForm of items.controls; let i = index"
+                            [id]="i" [formGroupName]="i"
+                        >
+                            <td> <input type="checkbox" formControlName="selected" (change)="selectItem(i)" /> </td>
+                            <td> <input formControlName="component" /> </td>
+                            <td> <input formControlName="price" /> </td>
+                            <td> <input type="number" min="1" formControlName="quantity" /> </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <input type="submit" value="Preview"  />
+        </div>
+
+    </form>
+  </div>
+
+  <ng-template #preview let-modal>
+    <div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">Pricelist Preview</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+        <h3> {{vendor}} </h3>
+        <table *ngIf="selectedItems.length">
+            <thead>
+                <tr>
+                    <td>S/N</td>
+                    <td>Components</td>
+                    <td>Quantity</td>
+                    <td>Price</td>
+                </tr>
+            </thead>
+            <tbody >
+                <tr
+                    *ngFor="let item of selectedItems; let i = index"
+                    [id]="i"
+                >
+                    <td> {{ i + 1 }} </td>
+                    <td> {{ item.component }} </td>
+                    <td> {{ item.quantity }} </td>
+                    <td> {{ item.price * item.quantity }} </td>
+                </tr>
+                <tr class="border-top">
+                    <td></td>
+                    <td></td>
+                    <td>Total</td>
+                    <td> {{ totalAmount }} </td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="!selectedItems.length">No Item selected</div>
+	</div>
+	<div class="modal-footer">
+        <button
+            type="button" class="btn btn-outline-primary"
+            (click)="modal.close('Edit click')"
+        >
+            Edit
+        </button>
+		<button
+            type="button" class="btn btn-outline-dark"
+            (click)="modal.close('Save click')"
+        >
+            Save
+        </button>
+	</div>
+  </ng-template>

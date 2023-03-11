@@ -1,32 +1,95 @@
-import { Component } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
+import pricelists from '../assets/data/pricelists.json';
+
+type entries = [string, number][];
 
 @Component({
   selector: 'app-root',
-  template: `
-    <!--The content below is only a placeholder and can be replaced.-->
-    <div style="text-align:center" class="content">
-      <h1>
-        Welcome to {{title}}!
-      </h1>
-      <span style="display: block">{{ title }} app is running!</span>
-      <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-    </div>
-    <h2>Here are some links to help you start: </h2>
-    <ul>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-      </li>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-      </li>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-      </li>
-    </ul>
-    <router-outlet></router-outlet>
-  `,
-  styles: []
+  templateUrl: 'app.component.html',
+  // stylesUrls: []
 })
-export class AppComponent {
+export class AppComponent implements OnInit  {
+
   title = 'BOM-pricelist-generator';
+  vendorList: string[] = [];
+  showList: boolean = false;
+
+  form: FormGroup;
+
+  vendor: string = "";
+  selectedItems: Array<any> = [];
+  totalAmount: number = 0;
+
+  constructor(
+    private fb: FormBuilder,
+    private modalService: NgbModal
+  ) {
+
+    this.form = fb.group({
+      vendor: ["", Validators.required],
+      items: fb.array([ ])
+    })
+
+    this.form.get("vendor")?.valueChanges.subscribe(value => {
+      let vendoItems = Object.values(pricelists)[this.vendorList.indexOf(value)];
+      this.showList = true;
+      this.addItems(Object.entries(vendoItems));
+    })
+  }
+
+  ngOnInit(): void {
+    this.vendorList = Object.keys(pricelists);
+  }
+
+  get items() {
+    return this.form.controls['items'] as FormArray;
+  }
+
+  addItems(itemsEntries: entries) {
+
+    this.items.clear();
+    itemsEntries.forEach(element => {
+      const itemsForm: FormGroup = this.fb.group({
+        selected: new FormControl(""),
+        component: new FormControl(element[0]),
+        price: new FormControl(element[1]),
+        quantity: new FormControl("", [Validators.min(0)])
+      })
+      itemsForm.get("component")?.disable();
+      itemsForm.get("price")?.disable();
+      itemsForm.get("quantity")?.disable();
+
+      this.items.push(itemsForm);
+    });
+  }
+
+  selectItem(index: number) {
+    let item =  this.items.controls[index];
+    if(item.get("selected")?.value){
+      this.items.controls[index].get("quantity")?.enable();
+      this.items.controls[index].patchValue({
+        quantity: 1
+      });
+    } else {
+      this.items.controls[index].get("quantity")?.disable();
+      this.items.controls[index].get("quantity")?.reset();
+    }
+  }
+
+  previewSelection(content: any) {
+
+    let formRawData = this.form.getRawValue();
+    this.vendor = formRawData.vendor;
+    this.selectedItems = formRawData.items.filter((x: any) => x.selected);
+    this.totalAmount = formRawData.items.map((x: any) => (x.price * x.quantity)).reduce((x: number, y: number) => x + y);
+
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(result => {
+
+    })
+  }
+
+
 }
