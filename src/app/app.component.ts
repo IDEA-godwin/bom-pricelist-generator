@@ -22,7 +22,7 @@ export class AppComponent implements OnInit  {
   title: string = "";
   vendor: string = "";
   selectedItems: Array<any> = [];
-  totalAmount: number = 0
+  totalAmount: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -36,6 +36,7 @@ export class AppComponent implements OnInit  {
     })
 
     this.form.get("vendor")?.valueChanges.subscribe(value => {
+      if (!value) return;
       let vendoItems = Object.values(pricelists)[this.vendorList.indexOf(value)];
       this.showList = true;
       this.addItems(Object.entries(vendoItems));
@@ -93,11 +94,11 @@ export class AppComponent implements OnInit  {
     this.selectedItems = formRawData.items.filter((x: any) => x.selected);
     this.totalAmount = formRawData.items.map((x: any) => (x.price * x.quantity)).reduce((x: number, y: number) => x + y);
 
-    this.modalService.open(content, { ariaLabelledBy: 'pricelist-preview-modal' }).result.then()
+    this.modalService.open(content, { ariaLabelledBy: 'pricelist-preview-modal' }).result.then();
   }
 
   saveListToPdf() {
-    let filename = this.title;
+    let generated: Blob;
     const list = document.getElementById("list-preview");
     const doc = new jsPDF({
       orientation: 'p',
@@ -105,18 +106,20 @@ export class AppComponent implements OnInit  {
     });
     doc.html(list!, {
       margin: [40, 40, 40, 40],
-      callback: function (doc) {
-        doc.save(`${filename}.pdf`);
+      callback: doc => {
+        generated = doc.output("blob");
+        console.log(this.saveFile(generated, this.title));
       }
     })
+
     this.form.reset();
     this.items.clear();
-    this.modalService.dismissAll();
-    // const pdfTable = this.listPreview.nativeElement;
-    // var html = htmlToPdfmake(list.innerHTML);
+    this.showList = false;
+  }
 
-    // const documentDefinition = { content: html };
-    // pdfMake.createPdf(documentDefinition).open();
-
+  saveFile(blob: any, filename: string): File {
+    blob.lastModifiedDate = new Date();
+    blob.name = filename;
+    return <File>blob;
   }
 }
